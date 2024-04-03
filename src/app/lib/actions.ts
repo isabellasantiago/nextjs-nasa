@@ -14,15 +14,14 @@ export type State = {
 const FormSchema = z.object({
     email: z.string().email('Invalid email'),
     password: z.string().min(8, 'At least 8 characters'),
-    confirmPassword: z.string().min(8, 'At least 8 characters').refine((value) => {
-        const { password } = value as unknown as { password: string };
-        return value === password;
-    }, { message: "Passwords don't match" }),
+    confirmPassword: z.string().min(8, 'At least 8 characters')
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"], // path of error
 });
 
-const CreateAccount = FormSchema.omit({})
 export async function createAccount(prevState: State, formData: FormData) {
-    const validatedFields = CreateAccount.safeParse({
+    const validatedFields = FormSchema.safeParse({
         email: formData.get('email'),
         password: formData.get('password'),
         confirmPassword: formData.get('confirmPassword')
@@ -46,9 +45,8 @@ export async function createAccount(prevState: State, formData: FormData) {
             message: `${error.message}`,
         };
     }
-    redirect('/main')
-    return{}
+    redirect('/login')
 }
 
 
-export async function login(){}
+export async function login() { }

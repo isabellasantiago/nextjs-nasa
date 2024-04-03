@@ -5,17 +5,17 @@ import { Divider } from "../ui/components/divider";
 import { poppins } from "../ui/fonts";
 import { useFormState } from 'react-dom';
 
-export default async function Page() {
-    const initialState = { message: null, errors: {} };
+export default function Page() {
+    const initialState = { message: '', errors: {} };
     const [state, dispatch] = useFormState(createAccount, initialState);
+
     return (
-        <div className="w-full h-full bg-slate-900 flex flex-col justify-center items-center px-[5%] gap-6 ">
+        <div className="w-full h-lsh bg-slate-900 flex flex-col justify-center items-center px-[5%] gap-6 ">
             <h1 className={`${poppins.className} text-5xl antialiased font-bold text-white tracking-wide`}>
                 Sign up
             </h1>
-
-            <form action={dispatch}>
-                <div className={`${poppins.className} text-sm flex flex-col gap text-white w-full max-w-xl`}>
+            <form action={dispatch} className="w-full flex flex-col justify-center items-center max-w-sm gap-6 ">
+                <div className={`${poppins.className} text-sm flex flex-col gap text-white w-full`}>
                     <label htmlFor="email">Email</label>
                     <input type="text" name="email" className="w-full h-12 bg-slate-800 rounded-lg border-solid border-2 border-gray-600 font-sans p-2 text-white" placeholder="example@email.com" />
                     <div id="email-error" aria-live="polite" aria-atomic="true">
@@ -53,7 +53,7 @@ export default async function Page() {
                 <button type="submit" className={`w-full max-w-xl h-12 bg-slate-200 hover:bg-slate-100 rounded-lg border-solid border border-gray-600 ${poppins.className} font-bold text-slate-900`}>create</button>
             </form>
 
-            <Divider />
+            <Divider size="max-w-sm" />
         </div>
     )
 }
