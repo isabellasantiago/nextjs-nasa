@@ -1,6 +1,10 @@
 'use server'
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
+import { conncectToDatabase } from '@/helpers/server-helpers';
+import client from '@/prisma/client';
+import { signIn } from '../../../auth';
+import { AuthError } from 'next-auth';
 
 export type State = {
     errors?: {
@@ -36,17 +40,35 @@ export async function createAccount(prevState: State, formData: FormData) {
 
     const { email, password } = validatedFields.data;
 
-    //TODO - insertion into database
+    
     try {
-        //do something
-        console.log(validatedFields.data)
+        await conncectToDatabase()
+        await client.user.create()
+        
     } catch (error: any) {
         return {
             message: `${error.message}`,
         };
+    } finally {
+        await client.$disconnect()
+        redirect('/login')
     }
-    redirect('/login')
 }
 
 
-export async function login() { }
+export async function authenticate(prevState: string | undefined,
+    formData: FormData) {
+    try {
+        await signIn('credentials', formData);
+      } catch (error) {
+        if (error instanceof AuthError) {
+          switch (error.type) {
+            case 'CredentialsSignin':
+              return 'Invalid credentials.';
+            default:
+              return 'Something went wrong.';
+          }
+        }
+        throw error;
+      }
+}
